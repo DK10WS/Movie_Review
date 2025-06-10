@@ -2,10 +2,30 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from userAUTH.connection import get_db
-from schemas import UserCreate , LoginCheck
+from schemas import UserCreate , LoginCheck, Token
+from jose import jwt, JWTError
 from userAUTH.Model import User
+from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
+import os
 
 router = APIRouter()
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
+
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
@@ -37,6 +57,7 @@ def register_user(creds: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login(cred: LoginCheck, db: Session = Depends(get_db)):
+
     user = db.query(User).filter(User.email == cred.email).first()
 
     if not user:
@@ -45,4 +66,5 @@ def login(cred: LoginCheck, db: Session = Depends(get_db)):
     if not verify_password(cred.password, user.password):
         raise HTTPException(status_code=400, detail="Password is incorrect")
 
-    return {"message": "Logged in GG"}
+    access_token = create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}
