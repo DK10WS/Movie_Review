@@ -1,15 +1,20 @@
+from connection import Connect, engine
 from fastapi import FastAPI, HTTPException, Request, status
+from middleware.middleware import JWTAuthMiddleware
+from movies.movies import routers
 from userAUTH.auth import router
-from userAUTH.connection import Connect, engine
-from userAUTH.middleware import JWTAuthMiddleware
 
 app = FastAPI()
 app.add_middleware(JWTAuthMiddleware)
+
 app.include_router(router)
+app.include_router(routers)
+
 
 @app.on_event("startup")
 def startup():
     Connect()
+
 
 @app.on_event("shutdown")
 def shutdown_event():

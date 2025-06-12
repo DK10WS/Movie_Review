@@ -1,14 +1,14 @@
 import os
 from datetime import datetime, timedelta, timezone
 
+from connection import get_db
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, Response
 from jose import jwt
+from Model import User
 from passlib.context import CryptContext
 from schemas import LoginCheck, Token, UserCreate
 from sqlalchemy.orm import Session
-from userAUTH.connection import get_db
-from userAUTH.Model import User
 
 router = APIRouter()
 load_dotenv()
@@ -39,13 +39,6 @@ def hash_password(password: str) -> str:
 
 def verify_password(normal_password, hashed_password):
     return pwd_context.verify(normal_password, hashed_password)
-
-
-@router.post("/decode/{token}")
-def decode(token):
-    decoded = jwt.decode(token, SECRET_KEY, ALGORITHM)
-    print(decoded)
-    return decoded
 
 
 @router.post("/register")
