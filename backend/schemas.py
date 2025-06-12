@@ -1,5 +1,4 @@
 from pydantic import BaseModel, EmailStr
-from email.policy import strict
 
 class UserCreate(BaseModel):
     username: str
