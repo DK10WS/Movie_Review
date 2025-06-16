@@ -1,11 +1,13 @@
 import os
+
+from connection import get_db
+from fastapi import Depends
 from jose import JWTError, jwt
+from Model import User
 from sqlalchemy.orm import Session
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-from connection import get_db
-from Model import User
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
@@ -52,5 +54,9 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
             return JSONResponse(
                 status_code=500, content={"detail": f"Internal server error: {str(e)}"}
             )
-
+        print(request.state.user)
         return await call_next(request)
+
+
+def get_privilege(request: Request, db: Session = Depends(get_db)):
+    pass

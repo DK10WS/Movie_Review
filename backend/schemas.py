@@ -1,3 +1,4 @@
+from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 
@@ -8,24 +9,28 @@ class UserCreate(BaseModel):
     password: str
 
 
-class movies(BaseModel):
-    id: int
+class MovieCreate(BaseModel):
     title: str
     description: str
-    genre: list
+    genre: str
     rating: str
-    actors: list
-    tags: list
-    stars: float
-
-
-class reviews(BaseModel):
-    id: int
-    user_id: int
-    movie_id: int
+    stars: float = 0.0
     my_review: str
-    rating: float
-    comment: str
+    actors: List[str]
+    tags: List[str]
+    image: str
+
+
+class SeriesCreate(BaseModel):
+    title: str
+    description: str
+    genre: str
+    rating: str
+    stars: Optional[float] = 0.0
+    my_review: str
+    actors: List[str]
+    tags: List[str]
+    image: str
 
 
 class LoginCheck(BaseModel):

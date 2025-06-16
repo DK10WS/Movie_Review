@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta, timezone
 
 from connection import get_db
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from jose import jwt
 from Model import User
 from passlib.context import CryptContext
@@ -53,11 +53,12 @@ def register_user(creds: UserCreate, db: Session = Depends(get_db)):
         fullname=creds.fullname,
         email=creds.email,
         password=hashed_pwd,
+        role="user",
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return {"Message": new_user.fullname + "You are Registered"}
+    return {"Message": new_user.fullname + " You are Registered"}
 
 
 @router.post("/login")
@@ -75,3 +76,8 @@ def login(cred: LoginCheck, db: Session = Depends(get_db)):
     jwt = {"Authorization": f"Bearer {access_token}"}
 
     return Response(headers=jwt)
+
+
+def get_privileges(request: Request):
+    user = request.state.user
+    return {"role": user.role}

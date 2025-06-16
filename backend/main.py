@@ -21,7 +21,7 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(JWTAuthMiddleware)
 
 app.include_router(router)
-app.include_router(movie_routers, prefix="/movies", tags=["Movies"])
+app.include_router(movie_routers, prefix="/add")
 """"
 Depricated
 
@@ -46,4 +46,9 @@ async def homePage():
 @app.get("/profile")
 def profile(request: Request):
     user = request.state.user
-    return {"username": user.username, "email": user.email}
+    return {
+        "username": user.username,
+        "email": user.email,
+        "id": user.id,
+        "role": user.role,
+    }

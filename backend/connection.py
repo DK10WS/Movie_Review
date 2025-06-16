@@ -22,10 +22,15 @@ def connect():
         with engine.connect() as connection:
             result = connection.execute(text("SELECT 1"))
             print(" Database connected:", result.scalar())
+
     except Exception as e:
         print(" Database connection failed:", e)
-
+    print("Tables in metadata:", Base.metadata.tables.keys())
     Base.metadata.create_all(bind=engine)
+    # Base.metadata.drop_all(bind=engine)
+    # with engine.connect() as conn:
+    #     conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
+    #     conn.commit()
 
 
 def get_db():
