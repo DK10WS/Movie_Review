@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from connection import Connect, engine
+from connection import connect, engine
 from fastapi import FastAPI, Request
 from middleware.middleware import JWTAuthMiddleware
 from movies.movies import routers as movie_routers
@@ -10,10 +10,10 @@ from userAUTH.auth import router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # connect
-    await Connect()
+    connect()
     yield
     # disconnect
-    await engine.dispose()
+    engine.dispose()
     print("Connection is closed")
 
 

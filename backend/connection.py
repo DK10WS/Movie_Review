@@ -13,11 +13,11 @@ if DATABASE_URL is None:
 
 engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
+session_local = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
 
-def Connect():
+def connect():
     try:
         with engine.connect() as connection:
             result = connection.execute(text("SELECT 1"))
@@ -29,7 +29,7 @@ def Connect():
 
 
 def get_db():
-    db = SessionLocal()
+    db = session_local()
     try:
         yield db
     finally:

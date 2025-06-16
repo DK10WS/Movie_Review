@@ -2,7 +2,6 @@ import os
 from datetime import datetime, timedelta, timezone
 
 from connection import get_db
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, HTTPException, Response
 from jose import jwt
 from Model import User
@@ -11,7 +10,6 @@ from schemas import LoginCheck, Token, UserCreate
 from sqlalchemy.orm import Session
 
 router = APIRouter()
-load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
