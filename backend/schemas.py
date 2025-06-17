@@ -50,4 +50,4 @@ class Otp(BaseModel):
 
 
 class Sendotp(BaseModel):
-    email: str
+    email: EmailStr

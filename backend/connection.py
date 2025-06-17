@@ -1,8 +1,8 @@
 import os
 
 from dotenv import load_dotenv
-from sqlalchemy import Column, Integer, String, create_engine, text
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy import  create_engine, text
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 load_dotenv()
 
@@ -25,6 +25,7 @@ def connect():
 
     except Exception as e:
         print(" Database connection failed:", e)
+
     print("Tables in metadata:", Base.metadata.tables.keys())
     Base.metadata.create_all(bind=engine)
     # Base.metadata.drop_all(bind=engine)
