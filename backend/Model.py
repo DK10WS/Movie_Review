@@ -1,6 +1,6 @@
 from connection import Base
 from sqlalchemy import (CheckConstraint, Column, Float, ForeignKey, Integer,
-                        String, Table, Text)
+                        String, Table, Text, Boolean)
 from sqlalchemy.orm import relationship
 
 movie_actor = Table(
@@ -32,6 +32,13 @@ series_tag = Table(
 )
 
 
+class VerifyUser(Base):
+    __tablename__ = "otp"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    email = Column(String, nullable=False)
+    secret = Column(String, nullable=False)
+
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -40,6 +47,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     role = Column(String, nullable=False)
+    verified = Column(Boolean, nullable=False)
 
     comments = relationship("Comment", back_populates="user")
 

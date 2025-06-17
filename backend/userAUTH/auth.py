@@ -35,13 +35,12 @@ def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def verify_password(normal_password, hashed_password):
+def verify_password(normal_password: str, hashed_password: str) -> str:
     return pwd_context.verify(normal_password, hashed_password)
 
 
 @router.post("/register")
-def register_user(creds: UserCreate, db: Session = Depends(get_db)):
-
+async def register_user(creds: UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == creds.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -54,15 +53,18 @@ def register_user(creds: UserCreate, db: Session = Depends(get_db)):
         email=creds.email,
         password=hashed_pwd,
         role="user",
+        verified=False,
     )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
-    return {"Message": new_user.fullname + " You are Registered"}
+
+    return {"Message": new_user.fullname + " you are Registered"}
 
 
 @router.post("/login")
-def login(cred: LoginCheck, db: Session = Depends(get_db)):
+async def login(cred: LoginCheck, db: Session = Depends(get_db)):
 
     user = db.query(User).filter(User.email == cred.email).first()
 
@@ -78,6 +80,6 @@ def login(cred: LoginCheck, db: Session = Depends(get_db)):
     return Response(headers=jwt)
 
 
-def get_privileges(request: Request):
+def get_privileges(request: Request) -> dict[str:str]:
     user = request.state.user
     return {"role": user.role}

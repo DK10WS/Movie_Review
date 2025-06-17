@@ -1,4 +1,5 @@
 from typing import List, Optional
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -41,3 +42,12 @@ class LoginCheck(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class Otp(BaseModel):
+    email: EmailStr
+    otp: str
+
+
+class Sendotp(BaseModel):
+    email: str

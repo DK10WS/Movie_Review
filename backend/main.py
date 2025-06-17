@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-
+from userAUTH.mailService import router as rn
 from connection import connect, engine
 from fastapi import FastAPI, Request
 from middleware.middleware import JWTAuthMiddleware
@@ -21,6 +21,7 @@ app = FastAPI(lifespan=lifespan)
 app.add_middleware(JWTAuthMiddleware)
 
 app.include_router(router)
+app.include_router(rn)
 app.include_router(movie_routers, prefix="/add")
 """"
 Depricated

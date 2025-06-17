@@ -12,7 +12,14 @@ from starlette.responses import JSONResponse
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
-EXCLUDE_PATHS = ["/login", "/register", "/docs", "/openapi.json"]
+EXCLUDE_PATHS = [
+    "/login",
+    "/register",
+    "/docs",
+    "/openapi.json",
+    "/sendotp",
+    "/otpvalidate",
+]
 
 
 class JWTAuthMiddleware(BaseHTTPMiddleware):
@@ -56,7 +63,3 @@ class JWTAuthMiddleware(BaseHTTPMiddleware):
             )
         print(request.state.user)
         return await call_next(request)
-
-
-def get_privilege(request: Request, db: Session = Depends(get_db)):
-    pass

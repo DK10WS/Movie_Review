@@ -31,6 +31,7 @@ def connect():
     # with engine.connect() as conn:
     #     conn.execute(text("DROP SCHEMA public CASCADE; CREATE SCHEMA public;"))
     #     conn.commit()
+    #     print("DB Cleaned")
 
 
 def get_db():
