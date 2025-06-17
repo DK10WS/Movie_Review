@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class UserCreate(BaseModel):
@@ -10,12 +10,19 @@ class UserCreate(BaseModel):
     password: str
 
 
+class CommentCreate(BaseModel):
+    movie_id: Optional[int] = None
+    series_id: Optional[int] = None
+    rating: float = Field(..., ge=0.0, le=5.0)
+    comment: Optional[str] = ""
+
+
 class MovieCreate(BaseModel):
     title: str
     description: str
     genre: str
     rating: str
-    stars: float = 0.0
+    stars: float = Field(..., ge=0.0, le=5.0)
     my_review: str
     actors: List[str]
     tags: List[str]
@@ -27,7 +34,7 @@ class SeriesCreate(BaseModel):
     description: str
     genre: str
     rating: str
-    stars: Optional[float] = 0.0
+    stars: float = Field(..., ge=0.0, le=5.0)
     my_review: str
     actors: List[str]
     tags: List[str]
