@@ -1,21 +1,20 @@
 import hashlib
 import os
 import smtplib
-import typing
 
 import redis
-from starlette.routing import Host
 from connection import get_db
 from fastapi import APIRouter, Depends, HTTPException
 from Model import TempStorage, User
 from schemas import Sendotp
 from sqlalchemy.orm import Session
+from starlette.routing import Host
 
 URL = os.getenv("URL")
 PASSWORD = os.getenv("PASSWORD", "")
 EMAIL = os.getenv("EMAIL", "")
-HOST = os.getenv("LOCALHOST", "")
-PORT = typing.cast(int, os.getenv("PORT"))
+HOST = os.getenv("LOCALHOST", "localhost")
+PORT = int(os.getenv("PORT", 6379))
 
 
 if not URL or not PASSWORD or not EMAIL or not Host:
@@ -23,7 +22,7 @@ if not URL or not PASSWORD or not EMAIL or not Host:
 
 router = APIRouter()
 
-redis_client = redis.Redis(host=HOST, port=PORT, db=0, decode_responses=True)
+redis_client = redis.Redis(host=HOST, port=PORT, decode_responses=True)
 
 
 def email_hash(email: str) -> str:

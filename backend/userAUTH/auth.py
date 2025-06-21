@@ -93,7 +93,7 @@ async def login(cred: LoginCheck, db: Session = Depends(get_db)):
     return Response(headers=jwt)
 
 
-def get_privileges(request: Request) -> dict:
+def get_privileges(request: Request):
     user = request.state.user
     return {"role": user.role}
 

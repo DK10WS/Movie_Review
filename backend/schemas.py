@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from fastapi import UploadFile
 from pydantic import BaseModel, EmailStr, Field
 
 
@@ -26,7 +27,7 @@ class MovieCreate(BaseModel):
     my_review: str
     actors: List[str]
     tags: List[str]
-    image: str
+    image: UploadFile
 
 
 class SeriesCreate(BaseModel):

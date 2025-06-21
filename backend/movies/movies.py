@@ -1,7 +1,8 @@
 from connection import get_db
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import (APIRouter, Depends, File, Form, HTTPException, Request,
+                     UploadFile)
 from Model import Actor, Movie, Series, Tag
-from schemas import MovieCreate, SeriesCreate
+from movies.s3 import upload_image_to_s3
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from userAUTH.auth import get_privileges
@@ -10,16 +11,29 @@ routers = APIRouter()
 
 
 @routers.post("/movies")
-def add_movie(
-    movie: MovieCreate,
+async def add_movie(
+    title: str = Form(...),
+    description: str = Form(...),
+    genre: str = Form(...),
+    rating: str = Form(...),
+    stars: float = Form(...),
+    my_review: str = Form(...),
+    actors: list[str] = Form(...),
+    tags: list[str] = Form(...),
+    image: UploadFile = File(...),
     db: Session = Depends(get_db),
-    priv: str = Depends(get_privileges),
+    priv: dict = Depends(get_privileges),
 ):
     if priv["role"] != "admin":
-        return {"message": "Not AUthorized contact admin"}
+        return {"message": "Not Authorized contact admin"}
+
+    try:
+        image_url = await upload_image_to_s3(image)
+    except Exception as e:
+        return {"error": str(e)}
 
     actor_objs = []
-    for actor_name in movie.actors:
+    for actor_name in actors:
         actor = db.query(Actor).filter(Actor.name == actor_name).first()
         if not actor:
             actor = Actor(name=actor_name)
@@ -28,7 +42,7 @@ def add_movie(
         actor_objs.append(actor)
 
     tag_objs = []
-    for tag_name in movie.tags:
+    for tag_name in tags:
         tag = db.query(Tag).filter(Tag.name == tag_name).first()
         if not tag:
             tag = Tag(name=tag_name)
@@ -37,15 +51,15 @@ def add_movie(
         tag_objs.append(tag)
 
     new_movie = Movie(
-        title=movie.title,
-        description=movie.description,
-        genre=movie.genre,
-        rating=movie.rating,
-        stars=movie.stars,
-        my_review=movie.my_review,
+        title=title,
+        description=description,
+        genre=genre,
+        rating=rating,
+        stars=stars,
+        my_review=my_review,
         actors=actor_objs,
         tags=tag_objs,
-        image=movie.image,
+        image=image_url,
     )
 
     db.add(new_movie)
@@ -56,45 +70,63 @@ def add_movie(
 
 
 @routers.post("/series")
-def add_series(
-    series: SeriesCreate,
+async def add_series(
+    title: str = Form(...),
+    description: str = Form(...),
+    genre: str = Form(...),
+    rating: str = Form(...),
+    stars: float = Form(...),
+    my_review: str = Form(...),
+    actor_names: list[str] = Form(...),
+    tag_names: list[str] = Form(...),
+    image: UploadFile = File(...),
     db: Session = Depends(get_db),
-    role: str = Depends(get_privileges),
+    priv: dict = Depends(get_privileges),
 ):
-    if role != "admin":
-        return {"message": "Not AUthorized contact admin"}
+    if priv["role"] != "admin":
+        return {"message": "Not Authorized contact admin"}
+
+    try:
+        image_url = await upload_image_to_s3(image)
+    except Exception as e:
+        return {"error": str(e)}
+
     actor_objects = []
-    for name in series.actor_names:
-        actor = db.query(Actor).filter(
-            func.lower(Actor.name) == name.lower()).first()
+    for name in actor_names:
+        actor = db.query(Actor).filter(func.lower(Actor.name) == name.lower()).first()
         if not actor:
             actor = Actor(name=name)
             db.add(actor)
+            db.flush()
         actor_objects.append(actor)
 
     tag_objects = []
-    for name in series.tag_names:
-        tag = db.query(Tag).filter(func.lower(
-            Tag.name) == name.lower()).first()
+    for name in tag_names:
+        tag = db.query(Tag).filter(func.lower(Tag.name) == name.lower()).first()
         if not tag:
             tag = Tag(name=name)
             db.add(tag)
+            db.flush()
         tag_objects.append(tag)
 
     new_series = Series(
-        title=series.title,
-        description=series.description,
-        genre=series.genre,
-        rating=series.rating,
-        stars=series.stars,
-        my_review=series.my_review,
+        title=title,
+        description=description,
+        genre=genre,
+        rating=rating,
+        stars=stars,
+        my_review=my_review,
         actors=actor_objects,
         tags=tag_objects,
-        image=series.image,
+        image=image_url,
     )
 
     db.add(new_series)
     db.commit()
     db.refresh(new_series)
 
-    return {"message": "Series added successfully", "series_id": new_series.id}
+    return {
+        "message": "Series added successfully",
+        "series_id": new_series.id,
+        "image_url": image_url,
+    }

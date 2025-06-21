@@ -27,6 +27,7 @@ app.include_router(router)
 app.include_router(rev)
 app.include_router(rn)
 app.include_router(movie_routers, prefix="/add")
+
 """"
 Depricated
 
