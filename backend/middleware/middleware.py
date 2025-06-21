@@ -19,6 +19,9 @@ EXCLUDE_PATHS = [
     "/openapi.json",
     "/sendotp",
     "/verifyOTP",
+    "/movies/top",
+    "/series/top",
+    "/get_movies"
 ]
 
 

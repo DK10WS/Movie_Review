@@ -4,8 +4,21 @@ services:
     container_name: redis1
     volumes:
       - "./data:/data"
-#    environment:
-#      - REDIS_ARGS=--user virtue on +@all ~* >moneypal
     ports:
       - "6379:6379"
       - "8001:8001"
+#   postgres:
+#     image: postgres:16
+#     container_name: my-postgres
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_USER: DK10
+#       POSTGRES_PASSWORD: Test
+#       POSTGRES_DB: movie_review
+#     volumes:
+#       - pgdata:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+#
+# volumes:
+#   pgdata:

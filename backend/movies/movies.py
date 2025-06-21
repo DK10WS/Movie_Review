@@ -93,7 +93,8 @@ async def add_series(
 
     actor_objects = []
     for name in actor_names:
-        actor = db.query(Actor).filter(func.lower(Actor.name) == name.lower()).first()
+        actor = db.query(Actor).filter(
+            func.lower(Actor.name) == name.lower()).first()
         if not actor:
             actor = Actor(name=name)
             db.add(actor)
@@ -102,7 +103,8 @@ async def add_series(
 
     tag_objects = []
     for name in tag_names:
-        tag = db.query(Tag).filter(func.lower(Tag.name) == name.lower()).first()
+        tag = db.query(Tag).filter(func.lower(
+            Tag.name) == name.lower()).first()
         if not tag:
             tag = Tag(name=name)
             db.add(tag)

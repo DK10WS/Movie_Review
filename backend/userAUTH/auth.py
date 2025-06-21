@@ -4,6 +4,7 @@ from typing import cast
 
 from connection import get_db
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 from jose import jwt
 from Model import TempStorage, User
 from passlib.context import CryptContext
@@ -17,7 +18,8 @@ ALGORITHM = cast(str, os.getenv("ALGORITHM"))
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 if not SECRET_KEY or not ALGORITHM:
-    raise ValueError("SECRET_KEY and ALGORITHM must be set in environment variables")
+    raise ValueError(
+        "SECRET_KEY and ALGORITHM must be set in environment variables")
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -44,24 +46,24 @@ def verify_password(normal_password: str, hashed_password) -> bool:
 
 @router.post("/register")
 async def register_user(creds: UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == creds.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    email = creds.email.lower()
 
-    verified_email = (
-        db.query(TempStorage).filter(TempStorage.email == creds.email).first()
-    )
+    existing_user = db.query(User).filter(User.email == email).first()
+    if existing_user:
+        raise HTTPException(status_code=409, detail="email_already_registered")
+
+    verified_email = db.query(TempStorage).filter(TempStorage.email == email).first()
     if not verified_email:
         raise HTTPException(
             status_code=403,
-            detail="Email not verified. Please verify via the link sent to your email.",
+            detail="email_not_verified"
         )
 
     hashed_pwd = hash_password(creds.password)
     new_user = User(
         username=creds.username,
         fullname=creds.fullname,
-        email=creds.email,
+        email=email,
         password=hashed_pwd,
         role="user",
     )
@@ -73,24 +75,46 @@ async def register_user(creds: UserCreate, db: Session = Depends(get_db)):
     db.delete(verified_email)
     db.commit()
 
-    return {"message": f"{new_user.fullname}, you are registered successfully."}
-
+    return {"message": "registration_successful"}
 
 @router.post("/login")
 async def login(cred: LoginCheck, db: Session = Depends(get_db)):
+    email = cred.email.lower()
+    print(f"Received login: {email}, {cred.password}")
 
-    user = db.query(User).filter(User.email == cred.email).first()
-
+    user = db.query(User).filter(User.email == email).first()
     if not user:
-        raise HTTPException(status_code=400, detail="User does not exist")
+        raise HTTPException(status_code=404, detail="email_not_found")
 
     if not verify_password(cred.password, user.password):
-        raise HTTPException(status_code=400, detail="Password is incorrect")
+        raise HTTPException(status_code=401, detail="incorrect_password")
 
     access_token = create_access_token(data={"sub": user.username})
-    jwt = {"Authorization": f"Bearer {access_token}"}
 
-    return Response(headers=jwt)
+    return JSONResponse(
+        content={
+            "message": "login_successful",
+            "access_token": access_token,
+            "token_type": "bearer",
+            "username": user.username,
+            "email": user.email,
+        },
+        headers={"Authorization": f"Bearer {access_token}"},
+        status_code=200,
+    )
+
+
+@router.get("/whoami")
+def whoami(request: Request, db: Session = Depends(get_db)):
+    user = request.state.user
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {
+        "username": user.username,
+        "fullname": user.fullname,
+        "email": user.email,
+        "role": user.role,
+    }
 
 
 def get_privileges(request: Request):
