@@ -33,12 +33,20 @@ class AuthService {
     }
   }
 
+  static Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+  }
+
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('token');
   }
 
-  static Future<Map<String, dynamic>?> whoami(BuildContext context) async {
+  static Future<Map<String, dynamic>?> whoami(
+    BuildContext context, {
+    bool silent = false,
+  }) async {
     final token = await getToken();
     if (token == null) return null;
 
@@ -51,7 +59,7 @@ class AuthService {
       return jsonDecode(response.body);
     }
 
-    handleApiError(response, context);
+    if (!silent) handleApiError(response, context);
     return null;
   }
 
@@ -67,6 +75,29 @@ class AuthService {
     } else {
       handleApiError(response, context);
       return false;
+    }
+  }
+
+  static Future<Map<String, dynamic>> sendOTPWithResponse(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/sendotp'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        return {'success': true};
+      } else {
+        final data = jsonDecode(response.body);
+        return {
+          'success': false,
+          'message': data['message'] ?? data['detail'] ?? 'Unknown error',
+          'code': response.statusCode,
+        };
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
     }
   }
 
@@ -99,7 +130,9 @@ class AuthService {
   static void handleApiError(http.Response response, BuildContext context) {
     try {
       final data = jsonDecode(response.body);
-      final detail = data['detail'] ?? 'unknown_error';
+      final detail = (data['detail'] ?? 'unknown_error')
+          .toString()
+          .toLowerCase();
 
       final messages = {
         'email_not_found': 'No account found with that email.',
@@ -113,10 +146,13 @@ class AuthService {
             'A verification link has already been sent.',
         'email_send_failed':
             'Failed to send verification email. Try again later.',
+        'invalid or expired verification link':
+            'This link is invalid or has expired.',
+        'email is already verified': 'This email is already verified.',
         'unknown_error': 'An unknown error occurred.',
       };
 
-      showError(messages[detail] ?? 'Something went wrong. [$detail]', context);
+      showError(messages[detail] ?? 'Something went wrong: $detail', context);
     } catch (e) {
       showError("Unexpected error: ${e.toString()}", context);
     }
@@ -132,6 +168,7 @@ class AuthService {
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(12),
+        duration: const Duration(seconds: 3),
       ),
     );
   }

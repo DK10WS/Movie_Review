@@ -5,7 +5,6 @@ import smtplib
 import redis
 from connection import get_db
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import RedirectResponse
 from Model import TempStorage, User
 from schemas import Sendotp
 from sqlalchemy.orm import Session
@@ -41,7 +40,7 @@ def send_email(email: str, link: str):
 
     message = f"Subject: Account Verification\n\nClick on this link to verify your acc OTP {
         link}."
-    with smtplib.SMTP("smtp.gmail.com", 586) as server:
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
         server.login(sender, password)
         server.sendmail(sender, receiver, message)
@@ -49,36 +48,38 @@ def send_email(email: str, link: str):
 
 @router.post("/sendotp")
 def sendOTP(email: Sendotp, db: Session = Depends(get_db)):
-    email_str = email.email.lower()
 
-    if not email_str:
-        raise HTTPException(status_code=400, detail="email_required")
+    if not email.email:
+        raise HTTPException(status_code=400, detail="Email is required")
 
     check_email = db.query(TempStorage).filter(
-        TempStorage.email == email_str).first()
-    existing_user = db.query(User).filter(User.email == email_str).first()
+        TempStorage.email == email.email).first()
+    existing_user = db.query(User).filter(User.email == email.email).first()
 
-    if check_email or existing_user:
+    if check_email:
+        raise HTTPException(status_code=409, detail="Email already verified")
+
+    if existing_user:
         raise HTTPException(
-            status_code=409, detail="email_already_verified_or_registered"
-        )
+            status_code=408, detail="Email already has a account")
 
-    hashed_email = email_hash(email_str)
+    hashed_email = email_hash(email.email)
 
     if redis_client.get(hashed_email):
-        return {"message": "verification_already_sent"}
+        return {"message": "Verification link already sent. Please check your email."}
 
-    redis_client.set(hashed_email, email_str)
+    redis_client.set(hashed_email, email.email)
     redis_client.expire(hashed_email, 600)
 
     link = create_link(hashed_email)
     try:
-        send_email(email_str, link)
+        send_email(email.email, link)
     except Exception as e:
         redis_client.delete(hashed_email)
-        raise HTTPException(status_code=500, detail="email_send_failed")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to send email: {str(e)}")
 
-    return {"message": "verification_email_sent"}
+    return {"message": f"Verification link sent to {email.email}"}
 
 
 @router.get("/verifyOTP/{email_hash}")
@@ -96,7 +97,8 @@ def verifyOTP(email_hash: str, db: Session = Depends(get_db)):
     existing_email = db.query(TempStorage).filter(
         TempStorage.email == email).first()
     if existing_email:
-        return {"message": "Email already verified"}
+        raise HTTPException(
+            status_code=409, detail="Email is already verified")
 
     new_email = TempStorage(email=email)
     db.add(new_email)
@@ -105,4 +107,4 @@ def verifyOTP(email_hash: str, db: Session = Depends(get_db)):
 
     redis_client.delete(email_hash)
 
-    return RedirectResponse(url="http://localhost:5500/signup.html", status_code=302)
+    return {"message": "OTP Verified continue to signup"}
