@@ -132,3 +132,5 @@ async def add_series(
         "series_id": new_series.id,
         "image_url": image_url,
     }
+
+
