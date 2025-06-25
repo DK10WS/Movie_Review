@@ -59,6 +59,7 @@ class Movie(Base):
     rating = Column(String)
     stars = Column(Float, default=0.0)
     my_review = Column(Text)
+    year_release = Column(Text)
     image = Column(Text)
 
     actors = relationship("Actor", secondary=movie_actor,
@@ -76,6 +77,7 @@ class Series(Base):
     rating = Column(String)
     stars = Column(Float, default=0.0)
     my_review = Column(Text)
+    year_release = Column(Text)
     image = Column(Text)
 
     actors = relationship("Actor", secondary=series_actor,

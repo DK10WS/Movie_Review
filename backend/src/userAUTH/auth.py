@@ -77,7 +77,7 @@ async def register_user(creds: UserCreate, db: Session = Depends(get_db)):
         fullname=creds.fullname,
         email=email,
         password=hashed_pwd,
-        role="user",
+        role="admin",
     )
 
     db.add(new_user)

@@ -28,6 +28,7 @@ class MovieCreate(BaseModel):
     actors: List[str]
     tags: List[str]
     image: UploadFile
+    year_release: int
 
 
 class SeriesCreate(BaseModel):
@@ -40,6 +41,7 @@ class SeriesCreate(BaseModel):
     actors: List[str]
     tags: List[str]
     image: str
+    year_release: int
 
 
 class LoginCheck(BaseModel):

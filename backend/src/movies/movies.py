@@ -18,6 +18,7 @@ async def add_movie(
     rating: str = Form(...),
     stars: float = Form(...),
     my_review: str = Form(...),
+    year_release: str = Form(...),
     actors: list[str] = Form(...),
     tags: list[str] = Form(...),
     image: UploadFile = File(...),
@@ -57,6 +58,7 @@ async def add_movie(
         rating=rating,
         stars=stars,
         my_review=my_review,
+        year_release=year_release,
         actors=actor_objs,
         tags=tag_objs,
         image=image_url,
@@ -77,6 +79,7 @@ async def add_series(
     rating: str = Form(...),
     stars: float = Form(...),
     my_review: str = Form(...),
+    year_release: str = Form(...),
     actor_names: list[str] = Form(...),
     tag_names: list[str] = Form(...),
     image: UploadFile = File(...),
@@ -118,6 +121,7 @@ async def add_series(
         rating=rating,
         stars=stars,
         my_review=my_review,
+        year_relese=year_release,
         actors=actor_objects,
         tags=tag_objects,
         image=image_url,
@@ -132,5 +136,3 @@ async def add_series(
         "series_id": new_series.id,
         "image_url": image_url,
     }
-
-
