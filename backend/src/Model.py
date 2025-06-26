@@ -59,6 +59,7 @@ class Movie(Base):
     rating = Column(String)
     stars = Column(Float, default=0.0)
     my_review = Column(Text)
+    language = Column(Text)
     year_release = Column(Text)
     image = Column(Text)
 
@@ -77,6 +78,7 @@ class Series(Base):
     rating = Column(String)
     stars = Column(Float, default=0.0)
     my_review = Column(Text)
+    language = Column(Text)
     year_release = Column(Text)
     image = Column(Text)
 

@@ -4,21 +4,20 @@ import 'package:http/http.dart' as http;
 import 'models.dart';
 import 'auth.dart';
 
-class MovieDetailPage extends StatefulWidget {
-  final int movieId;
-  const MovieDetailPage({super.key, required this.movieId});
+class SeriesDetailPage extends StatefulWidget {
+  final int seriesId;
+  const SeriesDetailPage({super.key, required this.seriesId});
 
   @override
-  State<MovieDetailPage> createState() => _MovieDetailPageState();
+  State<SeriesDetailPage> createState() => _SeriesDetailPageState();
 }
 
-class _MovieDetailPageState extends State<MovieDetailPage> {
-  MovieDetails? movie;
+class _SeriesDetailPageState extends State<SeriesDetailPage> {
+  MovieDetails? series;
   bool isLoading = true;
   bool submitting = false;
   List<Review> reviews = [];
   String? currentUsername;
-
   int userRating = 0;
   final TextEditingController commentController = TextEditingController();
 
@@ -27,8 +26,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     super.initState();
     fetchUserAndDetails();
   }
-
-  final token = AuthService.getToken();
 
   Future<void> fetchUserAndDetails() async {
     await fetchCurrentUser();
@@ -50,8 +47,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         setState(() {
           currentUsername = data['username'];
         });
-      } else {
-        print("whoami failed: ${res.statusCode} ${res.body}");
       }
     } catch (e) {
       print("Error fetching user: $e");
@@ -61,22 +56,22 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   Future<void> fetchDetails() async {
     try {
       final res = await http.get(
-        Uri.parse('http://localhost:8000/get_movies/${widget.movieId}'),
+        Uri.parse('http://localhost:8000/get_series/${widget.seriesId}'),
       );
       if (res.statusCode == 200) {
         setState(() {
-          movie = MovieDetails.fromJson(jsonDecode(res.body));
+          series = MovieDetails.fromJson(jsonDecode(res.body));
           isLoading = false;
         });
       }
     } catch (e) {
-      print("Error fetching movie detail: $e");
+      print("Error fetching series detail: $e");
     }
   }
 
   Future<void> fetchReviews() async {
     final res = await http.get(
-      Uri.parse('http://localhost:8000/reviews?movie_id=${widget.movieId}'),
+      Uri.parse('http://localhost:8000/reviews?series_id=${widget.seriesId}'),
     );
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body) as List;
@@ -111,7 +106,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         "Authorization": "Bearer $token",
       },
       body: jsonEncode({
-        "movie_id": widget.movieId,
+        "series_id": widget.seriesId,
         "rating": userRating,
         "comment": commentController.text.trim(),
       }),
@@ -303,7 +298,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(movie?.title ?? "Loading...")),
+      appBar: AppBar(title: Text(series?.title ?? "Loading...")),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -319,7 +314,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Image.network(
-                            movie!.image,
+                            series!.image,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Container(
                               color: Colors.grey.shade300,
@@ -332,24 +327,24 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        movie!.title,
+                        series!.title,
                         style: Theme.of(context).textTheme.headlineSmall,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "⭐ ${movie!.stars.toStringAsFixed(1)}",
+                        "⭐ ${series!.stars.toStringAsFixed(1)}",
                         style: const TextStyle(fontSize: 16),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),
-                      buildSection("Year of Release", movie!.year_release),
-                      buildSection("Movie Rating", movie!.rating),
-                      buildSection("Genre", movie!.genre),
-                      buildSection("Description", movie!.description),
-                      buildSection("My Review", movie!.myReview),
-                      buildSection("Actors", movie!.actors.join(', ')),
-                      buildSection("Tags", movie!.tags.join(', ')),
+                      buildSection("Year of Release", series!.year_release),
+                      buildSection("Rating", series!.rating),
+                      buildSection("Genre", series!.genre),
+                      buildSection("Description", series!.description),
+                      buildSection("My Review", series!.myReview),
+                      buildSection("Actors", series!.actors.join(', ')),
+                      buildSection("Tags", series!.tags.join(', ')),
                       buildReviewInput(),
                       buildReviewsSection(),
                     ],

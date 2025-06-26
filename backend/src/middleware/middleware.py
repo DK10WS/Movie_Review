@@ -21,7 +21,10 @@ EXCLUDE_PATHS = [
     "/verifyOTP",
     "/movies/top",
     "/series/top",
-    "/get_movies"
+    "/get_movies",
+    "/reviews",
+    "/search",
+    "/get_series",
 ]
 
 

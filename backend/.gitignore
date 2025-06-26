@@ -1,5 +1,4 @@
-.env
-venv
+src/.env
 __pycache__
-userAUTH/.env
-middleware/.env
+src/userAUTH/.env
+src/middleware/.env

@@ -1,7 +1,34 @@
 from typing import List, Optional
 
 from fastapi import UploadFile
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+
+class MovieOut(BaseModel):
+    id: int
+    title: str
+    stars: float
+    genre: str
+    image: str
+
+    model_config = {
+        "from_attributes": True
+    }
+
+
+class SeriesOut(BaseModel):
+    id: int
+    title: str
+    stars: float
+    rating: str
+    genre: str
+    image: str
+    year_release: str
+    actors: list[str]
+    tags: list[str]
+    my_review: str
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserCreate(BaseModel):
@@ -14,7 +41,7 @@ class UserCreate(BaseModel):
 class CommentCreate(BaseModel):
     movie_id: Optional[int] = None
     series_id: Optional[int] = None
-    rating: float = Field(..., ge=0.0, le=5.0)
+    rating: float = Field(..., ge=0.0, le=10.0)
     comment: Optional[str] = ""
 
 
@@ -23,7 +50,7 @@ class MovieCreate(BaseModel):
     description: str
     genre: str
     rating: str
-    stars: float = Field(..., ge=0.0, le=5.0)
+    stars: float = Field(..., ge=0.0, le=10.0)
     my_review: str
     actors: List[str]
     tags: List[str]
@@ -36,7 +63,7 @@ class SeriesCreate(BaseModel):
     description: str
     genre: str
     rating: str
-    stars: float = Field(..., ge=0.0, le=5.0)
+    stars: float = Field(..., ge=0.0, le=10.0)
     my_review: str
     actors: List[str]
     tags: List[str]

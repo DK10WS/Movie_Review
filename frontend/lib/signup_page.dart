@@ -55,7 +55,7 @@ class _SignupPageState extends State<SignupPage> {
         color: Colors.orange,
       );
       Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) Navigator.pushReplacementNamed(context, '/');
+        if (mounted) Navigator.pushReplacementNamed(context, '/login');
       });
     } else {
       showMessage(response['message'] ?? 'An unexpected error occurred');
@@ -80,7 +80,7 @@ class _SignupPageState extends State<SignupPage> {
         "Registration successful. Please login.",
         color: Colors.green,
       );
-      Navigator.pushReplacementNamed(context, '/');
+      Navigator.pushReplacementNamed(context, '/login');
     }
   }
 
@@ -214,7 +214,7 @@ class _SignupPageState extends State<SignupPage> {
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: () =>
-                              Navigator.pushReplacementNamed(context, '/'),
+                              Navigator.pushReplacementNamed(context, '/login'),
                           child: const Text(
                             "Already have an account? Login",
                             style: TextStyle(

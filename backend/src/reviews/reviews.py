@@ -1,8 +1,9 @@
-from connection import get_db
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session, joinedload
+
+from connection import get_db
 from Model import Comment, Movie, Series, User
 from schemas import CommentCreate
-from sqlalchemy.orm import Session, joinedload
 from userAUTH.auth import get_current_user
 
 router = APIRouter()
@@ -70,6 +71,7 @@ def get_reviews(
 
     return [
         {
+            "comment_id": comment.id,
             "username": comment.user.username,
             "rating": comment.rating,
             "comment": comment.comment,

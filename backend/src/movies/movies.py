@@ -1,10 +1,11 @@
-from connection import get_db
 from fastapi import (APIRouter, Depends, File, Form, HTTPException, Request,
                      UploadFile)
-from Model import Actor, Movie, Series, Tag
-from movies.s3 import upload_image_to_s3
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+
+from connection import get_db
+from Model import Actor, Movie, Series, Tag
+from movies.s3 import upload_image_to_s3
 from userAUTH.auth import get_privileges
 
 routers = APIRouter()
@@ -19,6 +20,7 @@ async def add_movie(
     stars: float = Form(...),
     my_review: str = Form(...),
     year_release: str = Form(...),
+    language: str = Form(...),
     actors: list[str] = Form(...),
     tags: list[str] = Form(...),
     image: UploadFile = File(...),
@@ -58,6 +60,7 @@ async def add_movie(
         rating=rating,
         stars=stars,
         my_review=my_review,
+        language=language,
         year_release=year_release,
         actors=actor_objs,
         tags=tag_objs,
@@ -79,6 +82,7 @@ async def add_series(
     rating: str = Form(...),
     stars: float = Form(...),
     my_review: str = Form(...),
+    language: str = Form(...),
     year_release: str = Form(...),
     actor_names: list[str] = Form(...),
     tag_names: list[str] = Form(...),
@@ -121,7 +125,8 @@ async def add_series(
         rating=rating,
         stars=stars,
         my_review=my_review,
-        year_relese=year_release,
+        year_release=year_release,
+        language=language,
         actors=actor_objects,
         tags=tag_objects,
         image=image_url,
