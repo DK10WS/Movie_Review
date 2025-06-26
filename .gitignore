@@ -1,5 +1,6 @@
 README.md
-db/data
 frontend.bak
 db/data
 pgdata
+data
+.env

@@ -1,6 +1,6 @@
 // Auth
 
-String baseurl = "http://localhost:8000";
+String baseurl = "http://localhost:8000/api";
 String login = "$baseurl/login";
 String Whoami = "$baseurl/whoami";
 String sendotp = "$baseurl/sendotp";

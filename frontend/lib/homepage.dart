@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "DK's List",
+            "Welcome${username != null ? ', $username' : ''}!",
             style: textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.primary,
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 10),
           Text(
-            "Welcome${username != null ? ', $username' : ''}! I share honest reviews of movies and series unbiased by public opinion or existing ratings. I don’t focus on who the actor is, but on their performance, the plot, and the overall quality of the movie/show. If you have a different take on something I’ve reviewed, feel free to share your opinion in the comments!",
+            "I share honest reviews of movies and series unbiased by public opinion or existing ratings. I don’t focus on who the actor is, but on their performance, the plot, and the overall quality of the movie/show. If you have a different take on something I’ve reviewed, feel free to share your opinion in the comments!",
             style: textTheme.bodyMedium?.copyWith(height: 1.5),
           ),
           const SizedBox(height: 16),

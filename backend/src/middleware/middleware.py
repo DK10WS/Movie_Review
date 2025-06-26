@@ -8,22 +8,22 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = os.getenv("SECRET_KEY", "")
+ALGORITHM = os.getenv("ALGORITHM", "")
 
 EXCLUDE_PATHS = [
-    "/login",
-    "/register",
-    "/docs",
-    "/openapi.json",
-    "/sendotp",
-    "/verifyOTP",
-    "/movies/top",
-    "/series/top",
-    "/get_movies",
-    "/reviews",
-    "/search",
-    "/get_series",
+    "/api/login",
+    "/api/register",
+    "/api/docs",
+    "/api/openapi.json",
+    "/api/sendotp",
+    "/api/verifyOTP",
+    "/api/movies/top",
+    "/api/series/top",
+    "/api/get_movies",
+    "/api/reviews",
+    "/api/search",
+    "/api/get_series",
 ]
 
 

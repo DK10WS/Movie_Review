@@ -1,4 +1,12 @@
 services:
+  backend:
+    build: backend
+    ports:
+      - "8000:8000"
+    env_file: .env
+    depends_on:
+      - redis-stack
+      - postgres
   redis-stack:
     image: redis/redis-stack
     container_name: redis1

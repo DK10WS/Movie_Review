@@ -8,6 +8,7 @@ class Movie {
   final List<String> actors;
   final String myReview;
   final String year_release;
+  final String language;
   final String type;
 
   Movie({
@@ -20,6 +21,7 @@ class Movie {
     required this.actors,
     required this.myReview,
     required this.year_release,
+    required this.language,
     required this.type,
   });
 
@@ -35,6 +37,7 @@ class Movie {
       myReview: json['my_review'] ?? '',
       year_release: json['year_release'] ?? '',
       type: json['type'] ?? 'movie',
+      language: json["language"] ?? "",
     );
   }
 }
@@ -56,6 +59,7 @@ class MovieDetails extends Movie {
     required super.type,
     required this.description,
     required this.tags,
+    required super.language,
   });
 
   factory MovieDetails.fromJson(Map<String, dynamic> json) {
@@ -72,6 +76,7 @@ class MovieDetails extends Movie {
       year_release: json['year_release'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),
       type: json['type'] ?? 'movie',
+      language: json["language"] ?? "",
     );
   }
 }
@@ -83,6 +88,7 @@ class Series {
   final String rating;
   final String genre;
   final String image;
+  final String language;
   final String year_release;
   final String type;
 
@@ -95,6 +101,7 @@ class Series {
     required this.image,
     required this.year_release,
     required this.type,
+    required this.language,
   });
 
   factory Series.fromJson(Map<String, dynamic> json) {
@@ -107,6 +114,7 @@ class Series {
       image: json['image']?.toString() ?? '',
       year_release: json['year_release'] ?? '',
       type: json['type'] ?? 'series',
+      language: json["language"] ?? "",
     );
   }
 }

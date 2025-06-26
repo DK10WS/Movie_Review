@@ -19,6 +19,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   bool submitting = false;
   List<Review> reviews = [];
   String? currentUsername;
+  String? currentUserRole;
 
   int userRating = 0;
   final TextEditingController commentController = TextEditingController();
@@ -50,6 +51,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         final data = jsonDecode(res.body);
         setState(() {
           currentUsername = data['username'];
+          currentUserRole = data['role'];
         });
       } else {
         print("whoami failed: ${res.statusCode} ${res.body}");
@@ -251,13 +253,15 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             ),
             const SizedBox(height: 12),
             ...reviews.map((review) {
-              final isMine = review.username == currentUsername;
+              final isMineOrAdmin =
+                  review.username == currentUsername ||
+                  currentUserRole == 'admin';
               return Card(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ListTile(
                   title: Text(review.comment),
                   subtitle: Text("⭐ ${review.rating} — by ${review.username}"),
-                  trailing: isMine
+                  trailing: isMineOrAdmin
                       ? IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () async {
@@ -341,6 +345,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       ),
                       const SizedBox(height: 24),
                       buildSection("Year of Release", movie!.year_release),
+                      buildSection("Language", movie!.language),
                       buildSection("Movie Rating", movie!.rating),
                       buildSection("Genre", movie!.genre),
                       buildSection("Description", movie!.description),
