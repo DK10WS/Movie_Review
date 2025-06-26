@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from connection import get_db
 from Model import Movie, Series
-from schemas import MovieOut, SeriesOut
+from schemas import MovieOut
 
 routers = APIRouter()
 
@@ -107,6 +107,21 @@ def search(query: str, db: Session = Depends(get_db)):
     ]
 
     return movie_data + series_data
+
+
+@routers.get("/movies/top_by_language")
+def get_top_movies_by_language(db: Session = Depends(get_db)):
+    movies = db.query(Movie).order_by(Movie.stars.desc()).all()
+
+    lang_map = {}
+    for movie in movies:
+        lang = movie.language or "Unknown"
+        if lang not in lang_map:
+            lang_map[lang] = []
+        if len(lang_map[lang]) < 20:
+            lang_map[lang].append(MovieOut.model_validate(movie).model_dump())
+
+    return lang_map
 
 
 @routers.get("/series/top_by_language")

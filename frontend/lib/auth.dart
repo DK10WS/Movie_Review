@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'redirects.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://localhost:8000';
-
   static Future<bool> loginUser(
     String email,
     String password,
     BuildContext context,
   ) async {
-    final url = Uri.parse('$baseUrl/login');
+    final url = Uri.parse(login);
 
     final response = await http.post(
       url,
@@ -51,7 +50,7 @@ class AuthService {
     if (token == null) return null;
 
     final response = await http.get(
-      Uri.parse('$baseUrl/whoami'),
+      Uri.parse(Whoami),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -65,7 +64,7 @@ class AuthService {
 
   static Future<bool> sendOTP(String email, BuildContext context) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/sendotp'),
+      Uri.parse(sendotp),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email.trim().toLowerCase()}),
     );
@@ -81,7 +80,7 @@ class AuthService {
   static Future<Map<String, dynamic>> sendOTPWithResponse(String email) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/sendotp'),
+        Uri.parse(sendotp),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email}),
       );
@@ -109,7 +108,7 @@ class AuthService {
     BuildContext context,
   ) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/register'),
+      Uri.parse(register),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username.trim(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
+import 'redirects.dart';
 
 class SearchPage extends StatefulWidget {
   final String initialQuery;
@@ -29,9 +30,7 @@ class _SearchPageState extends State<SearchPage> {
 
     try {
       final res = await http.get(
-        Uri.parse(
-          "http://localhost:8000/search?query=${Uri.encodeQueryComponent(q)}",
-        ),
+        Uri.parse("$search${Uri.encodeQueryComponent(q)}"),
       );
       if (res.statusCode == 200) {
         setState(() {

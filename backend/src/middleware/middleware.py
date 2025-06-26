@@ -1,7 +1,6 @@
 import os
 
 from connection import get_db
-from fastapi import Depends
 from jose import JWTError, jwt
 from Model import User
 from sqlalchemy.orm import Session

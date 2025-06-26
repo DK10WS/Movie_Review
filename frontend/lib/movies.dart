@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'redirects.dart';
 
 class MoviesPage extends StatefulWidget {
   const MoviesPage({super.key});
@@ -22,9 +23,7 @@ class _MoviesPageState extends State<MoviesPage> {
 
   Future<void> fetchMovies() async {
     try {
-      final res = await http.get(
-        Uri.parse('http://localhost:8000/movies/top_by_language'),
-      );
+      final res = await http.get(Uri.parse(movieslangugage));
       if (res.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(res.body);
         setState(() {

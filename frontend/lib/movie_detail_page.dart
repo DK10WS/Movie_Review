@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/redirects.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
@@ -42,7 +43,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
     try {
       final res = await http.get(
-        Uri.parse('http://localhost:8000/whoami'),
+        Uri.parse(Whoami),
         headers: {'Authorization': 'Bearer $token'},
       );
       if (res.statusCode == 200) {
@@ -60,9 +61,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   Future<void> fetchDetails() async {
     try {
-      final res = await http.get(
-        Uri.parse('http://localhost:8000/get_movies/${widget.movieId}'),
-      );
+      final res = await http.get(Uri.parse('$movieDetail${widget.movieId}'));
       if (res.statusCode == 200) {
         setState(() {
           movie = MovieDetails.fromJson(jsonDecode(res.body));
@@ -75,9 +74,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   Future<void> fetchReviews() async {
-    final res = await http.get(
-      Uri.parse('http://localhost:8000/reviews?movie_id=${widget.movieId}'),
-    );
+    final res = await http.get(Uri.parse('$reviews_link${widget.movieId}'));
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body) as List;
       setState(() {
@@ -105,7 +102,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     }
 
     final res = await http.post(
-      Uri.parse("http://localhost:8000/comment"),
+      Uri.parse(comment),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
@@ -137,7 +134,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     }
 
     final res = await http.delete(
-      Uri.parse('http://localhost:8000/delete/comment/$commentId'),
+      Uri.parse('$delete_comment$commentId'),
       headers: {'Authorization': 'Bearer $token'},
     );
 

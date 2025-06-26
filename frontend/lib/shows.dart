@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'redirects.dart';
 
 class ShowsPage extends StatefulWidget {
   const ShowsPage({super.key});
@@ -22,9 +23,7 @@ class _ShowsPageState extends State<ShowsPage> {
 
   Future<void> fetchShows() async {
     try {
-      final res = await http.get(
-        Uri.parse('http://localhost:8000/series/top_by_language'),
-      );
+      final res = await http.get(Uri.parse(serieslanguage));
       if (res.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(res.body);
         setState(() {

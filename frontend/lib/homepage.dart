@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'search_page.dart';
 import 'models.dart';
 import 'auth.dart';
+import 'redirects.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,12 +40,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> fetchContent() async {
     try {
-      final movieRes = await http.get(
-        Uri.parse('http://localhost:8000/movies/top'),
-      );
-      final seriesRes = await http.get(
-        Uri.parse('http://localhost:8000/series/top'),
-      );
+      final movieRes = await http.get(Uri.parse(topmovies));
+      final seriesRes = await http.get(Uri.parse(topseries));
 
       if (movieRes.statusCode == 200 && seriesRes.statusCode == 200) {
         setState(() {
@@ -95,7 +92,7 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 10),
           Text(
-            "Welcome${username != null ? ', $username' : ''}! DK's List is your personal guide to top-rated movies and series.",
+            "Welcome${username != null ? ', $username' : ''}! I share honest reviews of movies and series unbiased by public opinion or existing ratings. I don’t focus on who the actor is, but on their performance, the plot, and the overall quality of the movie/show. If you have a different take on something I’ve reviewed, feel free to share your opinion in the comments!",
             style: textTheme.bodyMedium?.copyWith(height: 1.5),
           ),
           const SizedBox(height: 16),
