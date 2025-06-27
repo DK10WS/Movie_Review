@@ -88763,21 +88763,21 @@ $.jM=null
 $.nw=null
 $.awP=1
 $.aql=-9007199254740992
-$.aMO="http://dkslist.dk10.tech/api/login"
-$.aqR="http://dkslist.dk10.tech/api/whoami"
-$.aNe="http://dkslist.dk10.tech/api/sendotp"
-$.aN6="http://dkslist.dk10.tech/api/register"
-$.aNB="http://dkslist.dk10.tech/api/movies/top"
-$.aNC="http://dkslist.dk10.tech/api/series/top"
-$.aNh="http://dkslist.dk10.tech/api/series/top_by_language"
-$.aMW="http://dkslist.dk10.tech/api/movies/top_by_language"
-$.aNc="http://dkslist.dk10.tech/api/search?query="
-$.aMV="http://dkslist.dk10.tech/api/get_movies/"
-$.aN8="http://dkslist.dk10.tech/api/reviews?movie_id="
-$.ay7="http://dkslist.dk10.tech/api/comment"
-$.ayi="http://dkslist.dk10.tech/api/delete/comment/"
-$.aNf="http://dkslist.dk10.tech/api/get_series/"
-$.aNg="http://dkslist.dk10.tech/api/reviews?series_id="
+$.aMO="https://dkslist.dk10.tech/api/login"
+$.aqR="https://dkslist.dk10.tech/api/whoami"
+$.aNe="https://dkslist.dk10.tech/api/sendotp"
+$.aN6="https://dkslist.dk10.tech/api/register"
+$.aNB="https://dkslist.dk10.tech/api/movies/top"
+$.aNC="https://dkslist.dk10.tech/api/series/top"
+$.aNh="https://dkslist.dk10.tech/api/series/top_by_language"
+$.aMW="https://dkslist.dk10.tech/api/movies/top_by_language"
+$.aNc="https://dkslist.dk10.tech/api/search?query="
+$.aMV="https://dkslist.dk10.tech/api/get_movies/"
+$.aN8="https://dkslist.dk10.tech/api/reviews?movie_id="
+$.ay7="https://dkslist.dk10.tech/api/comment"
+$.ayi="https://dkslist.dk10.tech/api/delete/comment/"
+$.aNf="https://dkslist.dk10.tech/api/get_series/"
+$.aNg="https://dkslist.dk10.tech/api/reviews?series_id="
 $.aEn=function(){var s=t.n
 return A.b([A.b([0.001200833568784504,0.002389694492170889,0.0002795742885861124],s),A.b([0.0005891086651375999,0.0029785502573438758,0.0003270666104008398],s),A.b([0.00010146692491640572,0.0005364214359186694,0.0032979401770712076],s)],t.zg)}()
 $.aEl=function(){var s=t.n
