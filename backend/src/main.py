@@ -36,7 +36,7 @@ app.include_router(router, prefix="/api")
 app.include_router(rev, prefix="/api")
 app.include_router(mov, prefix="/api")
 app.include_router(rn, prefix="/api")
-app.include_router(movie_routers, prefix="/add")
+app.include_router(movie_routers, prefix="/api/add")
 
 """"
 Depricated
@@ -52,3 +52,4 @@ def shutdown_event():
     print("Connection is closed")
 
 """
+

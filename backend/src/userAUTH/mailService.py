@@ -13,7 +13,7 @@ from starlette.routing import Host
 URL = os.getenv("URL")
 PASSWORD = os.getenv("PASSWORD", "")
 EMAIL = os.getenv("EMAIL", "")
-HOST = os.getenv("LOCALHOST", "localhost")
+HOST = os.getenv("HOST", "redis-stack")
 PORT = int(os.getenv("PORT", 6379))
 
 

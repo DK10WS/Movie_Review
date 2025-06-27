@@ -1,0 +1,11 @@
+dkslist.dk10.tech {
+  root * /frontend
+
+  try_files {path} /index.html
+
+  file_server
+
+  handle /api* {
+    reverse_proxy backend:8000
+  }
+}
