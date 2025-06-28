@@ -1,6 +1,6 @@
 // Auth
 
-String baseurl = "https://dkslist.dk10.tech/api";
+String baseurl = "https://dk10list.dk10.tech/api";
 String login = "$baseurl/login";
 String Whoami = "$baseurl/whoami";
 String sendotp = "$baseurl/sendotp";
