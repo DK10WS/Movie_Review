@@ -1,0 +1,11 @@
+dk10list.dk10.tech { 
+  route /api* {
+    reverse_proxy localhost:8000
+  }
+
+  route {
+    root * /var/www
+    try_files {path} /index.html
+    file_server
+  }
+}
