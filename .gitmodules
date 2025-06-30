@@ -1,0 +1,3 @@
+[submodule "recommendation"]
+	path = recommendation
+	url = git@github.com:DK10WS/Upgrade.git
