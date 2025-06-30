@@ -10,7 +10,7 @@ from movies.movies import routers as movie_routers
 from reviews.reviews import router as rev
 from userAUTH.auth import router
 from userAUTH.mailService import router as rn
-
+from recommendation_system.model.main import app as rec
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -33,6 +33,7 @@ app.add_middleware(
     expose_headers=["Authorization"],
 )
 app.include_router(router, prefix="/api")
+app.include_router(rec, prefix="/api")
 app.include_router(rev, prefix="/api")
 app.include_router(mov, prefix="/api")
 app.include_router(rn, prefix="/api")

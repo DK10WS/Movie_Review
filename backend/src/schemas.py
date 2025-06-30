@@ -11,9 +11,12 @@ class MovieOut(BaseModel):
     genre: str
     image: str
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = {"from_attributes": True}
+
+
+class RecommendationResponse(BaseModel):
+    title: str
+    score: float
 
 
 class SeriesOut(BaseModel):

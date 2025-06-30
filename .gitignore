@@ -4,3 +4,6 @@ db/data
 pgdata
 data
 .env
+backend/.cache
+backend/src/.cache/
+
