@@ -10,7 +10,7 @@ from movies.movies import routers as movie_routers
 from reviews.reviews import router as rev
 from userAUTH.auth import router
 from userAUTH.mailService import router as rn
-from recommendation_system.model.main import app as rec
+from recommendation.model.main import app as rec
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
