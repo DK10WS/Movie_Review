@@ -18,9 +18,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   bool isLoading = true;
   bool submitting = false;
   List<Review> reviews = [];
+  List<String> recommendations = [];
   String? currentUsername;
   String? currentUserRole;
-
   int userRating = 0;
   final TextEditingController commentController = TextEditingController();
 
@@ -29,8 +29,6 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     super.initState();
     fetchUserAndDetails();
   }
-
-  final token = AuthService.getToken();
 
   Future<void> fetchUserAndDetails() async {
     await fetchCurrentUser();
@@ -69,6 +67,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
           movie = MovieDetails.fromJson(jsonDecode(res.body));
           isLoading = false;
         });
+        await fetchRecommendations();
       }
     } catch (e) {
       print("Error fetching movie detail: $e");
@@ -76,12 +75,34 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   Future<void> fetchReviews() async {
-    final res = await http.get(Uri.parse('$reviews_link${widget.movieId}'));
-    if (res.statusCode == 200) {
-      final data = jsonDecode(res.body) as List;
-      setState(() {
-        reviews = data.map((json) => Review.fromJson(json)).toList();
-      });
+    try {
+      final res = await http.get(Uri.parse('$reviews_link${widget.movieId}'));
+      if (res.statusCode == 200) {
+        final data = jsonDecode(res.body) as List;
+        setState(() {
+          reviews = data.map((json) => Review.fromJson(json)).toList();
+        });
+      }
+    } catch (e) {
+      print("Error fetching reviews: $e");
+    }
+  }
+
+  Future<void> fetchRecommendations() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$recommendation${Uri.encodeComponent(movie!.title)}'),
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as List;
+        setState(() {
+          recommendations = data.cast<String>();
+        });
+      } else {
+        print("Recommendation fetch failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching recommendations: $e");
     }
   }
 
@@ -180,6 +201,34 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     );
   }
 
+  Widget buildRecommendations() {
+    if (recommendations.isEmpty) return const SizedBox.shrink();
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: Column(
+          children: [
+            const Divider(height: 32),
+            Text(
+              "Recommended Movies",
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            ...recommendations.map(
+              (title) => ListTile(
+                leading: const Icon(Icons.movie),
+                title: Text(title),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget buildStarInput() {
     return Wrap(
       alignment: WrapAlignment.center,
@@ -189,11 +238,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             index < userRating ? Icons.star : Icons.star_border,
             color: Colors.amber,
           ),
-          onPressed: () {
-            setState(() {
-              userRating = index + 1;
-            });
-          },
+          onPressed: () => setState(() => userRating = index + 1),
         );
       }),
     );
@@ -286,9 +331,8 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                                 ],
                               ),
                             );
-                            if (confirm == true) {
+                            if (confirm == true)
                               await deleteComment(review.commentId!);
-                            }
                           },
                         )
                       : null,
@@ -352,6 +396,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                       buildSection("My Review", movie!.myReview),
                       buildSection("Actors", movie!.actors.join(', ')),
                       buildSection("Tags", movie!.tags.join(', ')),
+                      buildRecommendations(),
                       buildReviewInput(),
                       buildReviewsSection(),
                     ],

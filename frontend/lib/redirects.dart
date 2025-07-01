@@ -28,6 +28,7 @@ String movieDetail = "$baseurl/get_movies/";
 String reviews_link = "$baseurl/reviews?movie_id=";
 String comment = "$baseurl/comment";
 String delete_comment = "$baseurl/delete/comment/";
+String recommendation = "$baseurl/recommendation/?title=";
 
 // Series Detail
 

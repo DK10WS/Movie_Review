@@ -13,7 +13,6 @@ SECRET_KEY = os.getenv("SECRET_KEY", "")
 ALGORITHM = os.getenv("ALGORITHM", "")
 
 EXCLUDE_PATHS = [
-    "/api/recommendation",
     "/api/login",
     "/api/register",
     "/api/docs",
@@ -26,6 +25,7 @@ EXCLUDE_PATHS = [
     "/api/reviews",
     "/api/search",
     "/api/get_series",
+    "/api/recommendation",
 ]
 
 
