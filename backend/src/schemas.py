@@ -4,6 +4,11 @@ from fastapi import UploadFile
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
+class PromoteUserRequest(BaseModel):
+    email: str
+    code: str
+
+
 class MovieOut(BaseModel):
     id: int
     title: str

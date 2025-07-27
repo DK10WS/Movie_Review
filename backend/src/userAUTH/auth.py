@@ -8,13 +8,14 @@ from fastapi.responses import JSONResponse
 from jose import jwt
 from Model import TempStorage, User
 from passlib.context import CryptContext
-from schemas import LoginCheck, UserCreate
+from schemas import LoginCheck, UserCreate, PromoteUserRequest
 from sqlalchemy.orm import Session
 
 router = APIRouter()
 
 SECRET_KEY = cast(str, os.getenv("SECRET_KEY"))
 ALGORITHM = cast(str, os.getenv("ALGORITHM"))
+PROMOTE = cast(str, os.getenv("PROMOTE"))
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
@@ -77,7 +78,7 @@ async def register_user(creds: UserCreate, db: Session = Depends(get_db)):
         fullname=creds.fullname,
         email=email,
         password=hashed_pwd,
-        role="admin",
+        role="user",
     )
 
     db.add(new_user)
@@ -118,6 +119,19 @@ async def login(cred: LoginCheck, db: Session = Depends(get_db)):
         status_code=200,
     )
 
+@router.post("/promote_user")
+def promote_user_to_admin(request: PromoteUserRequest, db: Session = Depends(get_db)):
+    if request.code != PROMOTE:
+        raise HTTPException(status_code=403, detail="Invalid secret code")
+
+    user = db.query(User).filter(User.email == request.email).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.role = "admin"
+    db.commit()
+
+    return {"message": f"User {user.username} promoted to admin"}
 
 @router.get("/whoami")
 def whoami(request: Request, db: Session = Depends(get_db)):

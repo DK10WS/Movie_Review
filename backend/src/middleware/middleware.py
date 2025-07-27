@@ -26,6 +26,7 @@ EXCLUDE_PATHS = [
     "/api/search",
     "/api/get_series",
     "/api/recommendation",
+    "/api/promote_user",
 ]
 
 
