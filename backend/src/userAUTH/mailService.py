@@ -38,8 +38,7 @@ def send_email(email: str, link: str):
     password = PASSWORD
     receiver = email
 
-    message = f"Subject: Account Verification\n\nClick on this link to verify your acc OTP {
-        link}."
+    message = f"Subject: Account Verification\n\nClick on this link to verify your acc OTP \n {link}."
     with smtplib.SMTP("smtp.gmail.com", 587) as server:
         server.starttls()
         server.login(sender, password)
