@@ -39,6 +39,7 @@ dependencies:
   shadcn_flutter: ^0.0.37
   flutter_rating_bar: ^4.0.1
   url_strategy: ^0.3.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
