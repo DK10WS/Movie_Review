@@ -1,0 +1,96 @@
+name: "Build and Releases"
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Gradle Java Home
+        run: sed -i '$d' frontend/android/gradle.properties
+
+      - name: Set Up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "oracle"
+          java-version: "17"
+          cache: gradle
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.27.2"
+          channel: "stable"
+          cache: true
+
+      - name: Decode Keystore
+        run: |
+          cd frontend
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > upload-keystore.jks
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/upload-keystore.jks
+          ls -l
+
+      - name: Create key.properties
+        run: |
+          cd frontend
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+          cat android/key.properties
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd frontend
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: frontend/build/app/outputs/flutter-apk/app-release.apk
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: release-apk
+          path: artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/app-release.apk
+          tag_name: v1.0.${{ github.run_number }}
+          name: "Release v1.0.${{ github.run_number }}"
+          body: "Automated release for commit ${{ github.sha }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
