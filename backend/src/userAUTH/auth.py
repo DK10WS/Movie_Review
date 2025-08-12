@@ -94,7 +94,6 @@ async def register_user(creds: UserCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 async def login(cred: LoginCheck, db: Session = Depends(get_db)):
     email = cred.email.lower()
-    print(f"Received login: {email}, {cred.password}")
 
     user = db.query(User).filter(User.email == email).first()
     if not user:
