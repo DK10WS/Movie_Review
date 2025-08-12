@@ -11,7 +11,7 @@ from minio.error import S3Error
 
 load_dotenv()
 
-endpoint = getenv("ENDPOINT", "s3.whyredfire.tech")
+endpoint = getenv("ENDPOINT", "s3.dk10.tech")
 secret_key = getenv("MINIO_SECRET_KEY")
 access_key = getenv("MINIO_ACCESS_KEY")
 bucket_name = getenv("BUCKETNAME", "movie")
@@ -53,5 +53,5 @@ async def upload_image_to_s3(image: UploadFile) -> str:
         if tmp_path and os.path.exists(tmp_path):
             os.remove(tmp_path)
 
-    url = client.presigned_get_object(bucket_name, image_key)
+    url = f"https://{endpoint}/{bucket_name}/{image_key}"
     return url
