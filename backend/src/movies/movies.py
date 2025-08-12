@@ -223,3 +223,85 @@ async def edit_movie_by_title_year(
         "message": "Movie updated successfully",
         "movie_title": movie.title,
     }
+
+
+@routers.patch("/edit_series")
+async def edit_series(
+    title: str = Form(...),
+    year_release: str = Form(...),
+    new_title: Optional[str] = Form(None),
+    description: Optional[str] = Form(None),
+    genre: Optional[str] = Form(None),
+    rating: Optional[str] = Form(None),
+    stars: Optional[float] = Form(None),
+    my_review: Optional[str] = Form(None),
+    language: Optional[str] = Form(None),
+    actor_names: Optional[List[str]] = Form(None),
+    tag_names: Optional[List[str]] = Form(None),
+    image: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    priv: dict = Depends(get_privileges),
+):
+    if priv["role"] != "admin":
+        return {"message": "Not Authorized contact admin"}
+
+    series = (
+        db.query(Series)
+        .filter(Series.title == title, Series.year_release == year_release)
+        .first()
+    )
+
+    if not series:
+        return {"error": "Movie not found"}
+
+    if new_title is not None:
+        series.title = new_title
+    if description is not None:
+        series.description = description
+    if genre is not None:
+        series.genre = genre
+    if rating is not None:
+        series.rating = rating
+    if stars is not None:
+        series.stars = stars
+    if my_review is not None:
+        series.my_review = my_review
+    if language is not None:
+        series.language = language
+
+    if image is not None:
+        try:
+            image_url = await upload_image_to_s3(image)
+            series.image = image_url
+        except Exception as e:
+            return {"error": str(e)}
+
+    if actor_names is not None:
+        actor_objs = []
+        for actor_name in actor_names:
+            actor = db.query(Actor).filter(Actor.name == actor_name).first()
+            if not actor:
+                actor = Actor(name=actor_name)
+                db.add(actor)
+                db.flush()
+            actor_objs.append(actor)
+        series.actors = actor_objs
+
+    if tag_names is not None:
+        tag_objs = []
+        for tag_name in tag_names:
+            tag = db.query(Tag).filter(Tag.name == tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                db.add(tag)
+                db.flush()
+            tag_objs.append(tag)
+        series.tags = tag_objs
+
+    db.commit()
+    db.refresh(series)
+
+    return {
+        "message": "Series updated successfully",
+        "series": series.title,
+    }
