@@ -226,7 +226,7 @@ async def edit_movie_by_title_year(
 
 
 @routers.patch("/edit_series")
-async def edit_series(
+async def edit_series_by_title_year(
     title: str = Form(...),
     year_release: str = Form(...),
     new_title: Optional[str] = Form(None),
@@ -236,8 +236,8 @@ async def edit_series(
     stars: Optional[float] = Form(None),
     my_review: Optional[str] = Form(None),
     language: Optional[str] = Form(None),
-    actor_names: Optional[List[str]] = Form(None),
-    tag_names: Optional[List[str]] = Form(None),
+    actors: Optional[List[str]] = Form(None),
+    tags: Optional[List[str]] = Form(None),
     image: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
     priv: dict = Depends(get_privileges),
@@ -252,7 +252,7 @@ async def edit_series(
     )
 
     if not series:
-        return {"error": "Movie not found"}
+        return {"error": "Series not found"}
 
     if new_title is not None:
         series.title = new_title
@@ -276,9 +276,9 @@ async def edit_series(
         except Exception as e:
             return {"error": str(e)}
 
-    if actor_names is not None:
+    if actors is not None:
         actor_objs = []
-        for actor_name in actor_names:
+        for actor_name in actors:
             actor = db.query(Actor).filter(Actor.name == actor_name).first()
             if not actor:
                 actor = Actor(name=actor_name)
@@ -287,9 +287,9 @@ async def edit_series(
             actor_objs.append(actor)
         series.actors = actor_objs
 
-    if tag_names is not None:
+    if tags is not None:
         tag_objs = []
-        for tag_name in tag_names:
+        for tag_name in tags:
             tag = db.query(Tag).filter(Tag.name == tag_name).first()
             if not tag:
                 tag = Tag(name=tag_name)
@@ -303,5 +303,5 @@ async def edit_series(
 
     return {
         "message": "Series updated successfully",
-        "series": series.title,
+        "series_title": series.title,
     }
