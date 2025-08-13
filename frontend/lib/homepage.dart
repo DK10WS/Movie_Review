@@ -244,7 +244,7 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item.title,
+                                  "${item.title} (${item.year_release})",
                                   style: textTheme.bodyLarge?.copyWith(
                                     fontWeight: FontWeight.w600,
                                   ),
