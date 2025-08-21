@@ -2,13 +2,13 @@ FROM ghcr.io/astral-sh/uv:python3.13-bookworm
 
 WORKDIR /backend
 
-COPY .env uv.lock pyproject.toml .
+COPY uv.lock pyproject.toml /backend/
 
 RUN uv sync
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-COPY src .
+COPY .env src /backend/
 
 EXPOSE 8000
 
